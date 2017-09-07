@@ -6,12 +6,23 @@ using AttTypeDefine;
 
 public class BaseActor : MonoBehaviour {
 
+    public static TestPlatzierenBall TPB;
+
     public static void OnStart()
     {
-        GameObject obj;
-        obj = Instantiate(Resources.Load("Prefabs/Plane")) as GameObject;
-        GameObject _obj;
-        _obj = Instantiate(Resources.Load("Prefabs/WriteBall")) as GameObject;
-        GlobalHelper.g_GlobalLevel.Initialized(_obj, obj);
+        //游戏对象
+        GameObject Plane;
+        Plane = Instantiate(Resources.Load("Prefabs/Plane")) as GameObject;
+        GameObject WriteBall;
+        WriteBall = Instantiate(Resources.Load("Prefabs/WriteBall")) as GameObject;
+        GlobalHelper.g_GlobalLevel.Initialized(WriteBall, Plane);
+        //UI
+        GameObject UIM = new GameObject("UIManager");
+        UIManager uim = UIM.AddComponent<UIManager>();
+        uim.UI<UIHand>();
+        //碰撞器
+        GameObject SpCol;
+        SpCol = Instantiate(Resources.Load("Prefabs/SpCol")) as GameObject;
+        TPB = SpCol.GetComponent<TestPlatzierenBall>();
     }
 }

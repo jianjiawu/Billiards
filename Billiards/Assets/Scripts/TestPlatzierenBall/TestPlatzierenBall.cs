@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class TestPlatzierenBall : MonoBehaviour {
 
+    GameObject UIMgr;
+    UIManager UIM;
+    UIHand UIh;
+    GameObject DP;
     //获得球游戏对象
     GameObject WhiteBall;
     GameObject HandUI;
-    GameObject sperecol;
+    GameObject SpCol;
     //获得球桌游戏对象
     Transform Table;
     Transform Left;
@@ -25,14 +29,24 @@ public class TestPlatzierenBall : MonoBehaviour {
     Camera m_cMainCam;
     Camera m_cUICam;
     //设置bool值控制开球
-    bool bIsFirstPlatzieren = false ;
+    bool bIsFirstPlatzieren =true;
     //设置bool值控制自由球
-    bool bFreisto = true ;
+    public bool bFreisto =false;
+    bool bCanPlatzieren = false;
+
+    public void OnStart()
+    {
+        gameObject.SetActive(true);
+    }
 
     private void Start()
     {
         //获得游戏对象
         GetBallAndTable();
+        //碰撞器
+        //SpCol = Instantiate(Resources.Load("Prefabs/SpCol")) as GameObject;
+        //SpCol.SetActive(false);
+        SpCol = gameObject;
         //球桌坐标转换
         TablePos = m_cMainCam.WorldToScreenPoint(Table.position);
         //Vector3 pos = Left.TransformPoint(Left.position);
@@ -96,13 +110,36 @@ public class TestPlatzierenBall : MonoBehaviour {
             }
         }
         //获得UI
-        if(null == HandUI)
+        //if(null == HandUI)
+        //{
+        //    for(int i=0;i<gameObject.transform.childCount;i++)
+        //    {
+        //        if("Hand" == gameObject.transform.GetChild(i).name)
+        //        {
+        //            HandUI = gameObject.transform.GetChild(i).gameObject;
+        //        }
+        //    }
+        //}
+        UIMgr = GameObject.Find("UIManager");
+        UIM = UIMgr.GetComponent<UIManager>();
+        UIh = UIM.UI<UIHand>(false);
+        if (DP == null)
         {
-            for(int i=0;i<gameObject.transform.childCount;i++)
+            for (int i = 0; i < UIh.gameObject.transform.childCount; i++)
             {
-                if("Hand" == gameObject.transform.GetChild(i).name)
+                if (UIh.gameObject.transform.GetChild(i).name == "DontPush")
                 {
-                    HandUI = gameObject.transform.GetChild(i).gameObject;
+                    DP = UIh.gameObject.transform.GetChild(i).gameObject;
+                }
+            }
+        }
+        if (HandUI == null)
+        {
+            for (int i = 0; i < UIh.gameObject.transform.childCount; i++)
+            {
+                if (UIh.gameObject.transform.GetChild(i).name == "Hand")
+                {
+                    HandUI = UIh.gameObject.transform.GetChild(i).gameObject;
                 }
             }
         }
@@ -114,11 +151,13 @@ public class TestPlatzierenBall : MonoBehaviour {
         {
             //开球
             Anstossen();
+            DP.transform.position = HandUI.transform.position;
         }
         if(bFreisto)
         {
             //自由球
             Freisto();
+            DP.transform.position = HandUI.transform.position;
         }
 	}
 
@@ -138,7 +177,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 //点击屏幕位置
                 Vector3 pos = m_cMainCam.ScreenToWorldPoint(Input.mousePosition);
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, pos.z);
                 //Debug.Log(pos);
                 //Debug.Log(BallPos);
                 //视口坐标
@@ -166,7 +205,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             {
                 //WhiteBall.transform.position = new Vector3(pos.x, 0.5f, pos.z);
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, pos.z);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -183,7 +222,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 //Vector3 ViewPos = m_cMainCam.WorldToViewportPoint(Pos);
                 //WhiteBall.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2, 0.5f, pos.z);
                 //世界坐标
-                Vector3 BallPos = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, pos.z);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -196,7 +235,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             {
                 //WhiteBall.transform.position = new Vector3(Left.transform.position.x, 0.5f, pos.z);
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.transform.position.x + size, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.transform.position.x + size, 0.5f, pos.z);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -209,7 +248,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             {
                 //WhiteBall.transform.position = new Vector3(pos.x, 0.5f, Down.transform.position.z);
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, Down.transform.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, Down.transform.position.z + size);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -222,7 +261,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             {
                 //WhiteBall.transform.position = new Vector3(pos.x, 0.5f, Top.transform.position.z);
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, Top.transform.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, Top.transform.position.z - size);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -233,7 +272,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y > TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.transform.position.x + size, 0.5f, Top.transform.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.transform.position.x + size, 0.5f, Top.transform.position.z - size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -245,7 +284,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y > TableTopPos.y)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Top.transform.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Top.transform.position.z - size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -257,7 +296,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableDownPos.y + size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.transform.position.x + size, 0.5f, Down.transform.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.transform.position.x + size, 0.5f, Down.transform.position.z + size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -269,7 +308,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableDownPos.y + size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Down.transform.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Down.transform.position.z + size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -303,7 +342,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 //点击屏幕位置
                 Vector3 pos = m_cMainCam.ScreenToWorldPoint(Input.mousePosition);
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, pos.z);
                 //Debug.Log(pos);
                 //Debug.Log(BallPos);
                 //视口坐标
@@ -314,6 +353,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 //Debug.Log(WhiteBall.transform.position);
                 //Debug.Log(m_cUICam.ViewportToWorldPoint(m_cMainCam.WorldToViewportPoint(BallPos)));
                 HandUI.SetActive(true);
+                SpCol.SetActive(true);
             }
             else
             {
@@ -333,7 +373,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, pos.z);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -346,7 +386,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Right.transform.position.x - size, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Right.transform.position.x - size, 0.5f, pos.z);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -359,7 +399,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                && Input.mousePosition.y < TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.position.x + size, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.position.x + size, 0.5f, pos.z);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -372,7 +412,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.x > TableLeftPos.x + size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, Down.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, Down.position.z + size);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -385,7 +425,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.x > TableLeftPos.x + size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(pos.x, 0.5f, Top.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(pos.x, 0.5f, Top.position.z - size);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -397,10 +437,10 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y > TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.position.x + size, 0.5f, Top.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.position.x + size, 0.5f, Top.position.z - size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
-                Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
+                Vector3 viewpos = SpCol.transform.position = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
                 HandUI.transform.position = m_cUICam.ViewportToWorldPoint(viewpos);
             }
@@ -409,7 +449,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y > TableTopPos.y - size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Right.position.x - size, 0.5f, Top.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Right.position.x - size, 0.5f, Top.position.z - size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -421,7 +461,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableDownPos.y + size)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Left.position.x + size, 0.5f, Down.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Left.position.x + size, 0.5f, Down.position.z + size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -433,7 +473,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableDownPos.y)
             {
                 //世界坐标
-                Vector3 BallPos = new Vector3(Right.position.x - size, 0.5f, Down.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3(Right.position.x - size, 0.5f, Down.position.z + size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -443,19 +483,39 @@ public class TestPlatzierenBall : MonoBehaviour {
         }
         if (Input.GetMouseButtonUp(0))
         {
-            HandUI.SetActive(false);
-            //UI坐标转为世界坐标
-            Vector3 Viewpos = m_cUICam.WorldToViewportPoint(HandUI.transform.position);
-            Vector3 BallPos = m_cMainCam.ViewportToWorldPoint(Viewpos);
-            WhiteBall.transform.position = BallPos;
-            WhiteBall.SetActive(true);
-            bFreisto = false;
+            if (bCanPlatzieren)
+            {
+                HandUI.SetActive(false);
+                //UI坐标转为世界坐标
+                Vector3 Viewpos = m_cUICam.WorldToViewportPoint(HandUI.transform.position);
+                Vector3 BallPos = m_cMainCam.ViewportToWorldPoint(Viewpos);
+                WhiteBall.transform.position = BallPos;
+                WhiteBall.SetActive(true);
+                bFreisto = false;
+            }
+            else
+            {
+                HandUI.transform.position = new Vector3(0, 0, 0);
+            }
         }
+
     }
 
     //判断当前位置是否有球
     private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.tag == "Ball")
+        {
+            DP.gameObject.SetActive(true);
+            bCanPlatzieren = false;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Ball")
+        {
+            DP.gameObject.SetActive(false);
+            bCanPlatzieren = true;
+        }
     }
 }

@@ -48,12 +48,14 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public T UI<T>() where T:Component
+    public T UI<T>(bool bLoad = true) where T:Component
     {
         Type t = typeof(T);
         StringBuilder sb = new StringBuilder(PrefabRoute);
         sb.Append(t.Name);
         T rel = null;
+        if (bLoad)
+        {
             UnityEngine.Object obj = Resources.Load(sb.ToString());
             GameObject _obj = Instantiate(obj) as GameObject;
             _obj.name = obj.name;
@@ -62,6 +64,17 @@ public class UIManager : MonoBehaviour {
             _obj.transform.rotation = Quaternion.identity;
             _obj.transform.localScale = Vector3.one;
             rel = _obj.AddComponent<T>();
+        }
+        else
+        {
+            for (int i = 0; i < ANCHOR.transform.childCount; i++)
+            {
+                if (t.Name == ANCHOR.transform.GetChild(i).name)
+                {
+                    rel = ANCHOR.transform.GetChild(i).GetComponent<T>();
+                }
+            }
+        }
         return rel;
     }
 }

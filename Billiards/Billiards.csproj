@@ -218,8 +218,10 @@
     <Compile Include="Assets\Scripts\Managers\BaseActor.cs" />
     <Compile Include="Assets\Scripts\Managers\GameStart.cs" />
     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
-    <Compile Include="Assets\Scripts\TestPlatzierenBall\SphereCollider1.cs" />
+    <Compile Include="Assets\Scripts\TestPlatzierenBall\SpCol.cs" />
+    <Compile Include="Assets\Scripts\TestPlatzierenBall\Test.cs" />
     <Compile Include="Assets\Scripts\TestPlatzierenBall\TestPlatzierenBall.cs" />
+    <Compile Include="Assets\Scripts\UI\DontPush.cs" />
     <Compile Include="Assets\Scripts\UI\UIHand.cs" />
     <Compile Include="Assets\Scripts\Utilities\AttTypeDefine.cs" />
     <Compile Include="Assets\Scripts\Utilities\GlobalHelper.cs" />
