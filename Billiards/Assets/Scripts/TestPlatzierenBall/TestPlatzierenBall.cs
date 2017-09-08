@@ -32,7 +32,7 @@ public class TestPlatzierenBall : MonoBehaviour {
     bool bIsFirstPlatzieren =true;
     //设置bool值控制自由球
     public bool bFreisto =false;
-    bool bCanPlatzieren = false;
+    bool bCanPlatzieren = true;
 
     public void OnStart()
     {
@@ -46,16 +46,23 @@ public class TestPlatzierenBall : MonoBehaviour {
         //碰撞器
         //SpCol = Instantiate(Resources.Load("Prefabs/SpCol")) as GameObject;
         //SpCol.SetActive(false);
-        SpCol = gameObject;
+        SpCol = gameObject;        
+        //设置尺寸
+        size = WhiteBall.GetComponent<SphereCollider>().radius + 0.1f;
         //球桌坐标转换
         TablePos = m_cMainCam.WorldToScreenPoint(Table.position);
         //Vector3 pos = Left.TransformPoint(Left.position);
-        TableLeftPos = m_cMainCam.WorldToScreenPoint(Left.position);
-        TableRightPos = m_cMainCam.WorldToScreenPoint(Right.position);
-        TableTopPos = m_cMainCam.WorldToScreenPoint(Top.position);
-        TableDownPos = m_cMainCam.WorldToScreenPoint(Down.position);
-        //设置尺寸
-        size = WhiteBall.GetComponent<SphereCollider>().radius + 0.1f;
+        //TableLeftPos = m_cMainCam.WorldToScreenPoint(Left.position);
+        //TableRightPos = m_cMainCam.WorldToScreenPoint(Right.position);
+        //TableTopPos = m_cMainCam.WorldToScreenPoint(Top.position);
+        //Debug.Log(TableTopPos);
+        //TableDownPos = m_cMainCam.WorldToScreenPoint(Down.position);
+        TableLeftPos = m_cMainCam.WorldToScreenPoint(new Vector3(Left.position.x+2*size,Left.position.y,Left.position.z));
+        TableRightPos = m_cMainCam.WorldToScreenPoint(new Vector3(Right.position.x - 2 * size, Right.position.y, Right.position.z));
+        TableTopPos = m_cMainCam.WorldToScreenPoint(new Vector3(Top.position.x, Top.position.y , Top.position.z- 2 * size));
+        //Debug.Log(TableTopPos);
+        TableDownPos = m_cMainCam.WorldToScreenPoint(new Vector3(Down.position.x, Down.position.y, Down.position.z + 2 * size));
+
     }
 
     //获得游戏对象
@@ -163,8 +170,9 @@ public class TestPlatzierenBall : MonoBehaviour {
 
     //开球逻辑
     void Anstossen()
-    { 
-        if(Input.GetMouseButtonDown(0))
+    {
+        HandUI.SetActive(true);
+        if (Input.GetMouseButtonDown(0))
         {
             if (Input.mousePosition.x < (TablePos.x + TableLeftPos.x) / 2 - size
                 && Input.mousePosition.x > TableLeftPos.x + size
@@ -187,7 +195,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 HandUI.transform.position = m_cUICam.ViewportToWorldPoint(Viewpos);
                 //Debug.Log(WhiteBall.transform.position);
                 //Debug.Log(m_cUICam.ViewportToWorldPoint(m_cMainCam.WorldToViewportPoint(BallPos)));
-                HandUI.SetActive(true);
+
             }
             else
             {
@@ -222,7 +230,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 //Vector3 ViewPos = m_cMainCam.WorldToViewportPoint(Pos);
                 //WhiteBall.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2, 0.5f, pos.z);
                 //世界坐标
-                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, pos.z);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2+size , 0.5f, pos.z);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
                 //UI世界坐标
@@ -255,7 +263,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 HandUI.transform.position = m_cUICam.ViewportToWorldPoint(viewpos);
             }
             //超出上边
-            if(Input.mousePosition.y > TableTopPos.y - size
+            if(Input.mousePosition.y > TableTopPos.y + size
                 && Input.mousePosition.x < (TablePos.x + TableLeftPos.x) / 2 - size
                 && Input.mousePosition.x > TableLeftPos.x + size)
             {
@@ -281,10 +289,10 @@ public class TestPlatzierenBall : MonoBehaviour {
             }
             //右上
             if (Input.mousePosition.x > (TablePos.x + TableLeftPos.x) / 2 - size
-                && Input.mousePosition.y > TableTopPos.y)
+                && Input.mousePosition.y > TableTopPos.y- size)
             {
                 //世界坐标
-                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Top.transform.position.z - size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 + size, 0.5f, Top.transform.position.z - size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -308,7 +316,7 @@ public class TestPlatzierenBall : MonoBehaviour {
                 && Input.mousePosition.y < TableDownPos.y + size)
             {
                 //世界坐标
-                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 - size, 0.5f, Down.transform.position.z + size);
+                Vector3 BallPos = SpCol.transform.position = new Vector3((Table.transform.position.x + Left.transform.position.x) / 2 +size, 0.5f, Down.transform.position.z + size);
                 //Vector3 BallPos = new Vector3(pos.x,pos.y,0);
                 //视口坐标
                 Vector3 viewpos = m_cMainCam.WorldToViewportPoint(BallPos);
@@ -332,6 +340,7 @@ public class TestPlatzierenBall : MonoBehaviour {
     //自由球逻辑
     void Freisto()
     {
+        HandUI.SetActive(true);
         if (Input.GetMouseButtonDown(0))
         {
             if (Input.mousePosition.x < TableRightPos.x - size
@@ -352,7 +361,6 @@ public class TestPlatzierenBall : MonoBehaviour {
                 HandUI.transform.position = m_cUICam.ViewportToWorldPoint(Viewpos);
                 //Debug.Log(WhiteBall.transform.position);
                 //Debug.Log(m_cUICam.ViewportToWorldPoint(m_cMainCam.WorldToViewportPoint(BallPos)));
-                HandUI.SetActive(true);
                 SpCol.SetActive(true);
             }
             else
@@ -496,6 +504,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             else
             {
                 HandUI.transform.position = new Vector3(0, 0, 0);
+                DP.gameObject.SetActive(false);
             }
         }
 
@@ -509,13 +518,17 @@ public class TestPlatzierenBall : MonoBehaviour {
             DP.gameObject.SetActive(true);
             bCanPlatzieren = false;
         }
+        else
+        {
+            bCanPlatzieren = true;
+        }
     }
     private void OnTriggerExit(Collider other)
     {
+        bCanPlatzieren = true;
         if (other.tag == "Ball")
         {
-            DP.gameObject.SetActive(false);
-            bCanPlatzieren = true;
+            DP.gameObject.SetActive(false);   
         }
     }
 }
