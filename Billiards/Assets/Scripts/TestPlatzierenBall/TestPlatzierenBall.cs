@@ -333,6 +333,7 @@ public class TestPlatzierenBall : MonoBehaviour {
             WhiteBall.transform.position = BallPos;
             WhiteBall.SetActive(true);
             bIsFirstPlatzieren = false;
+            Instantiate(Resources.Load("Prefabs/Club"));
         }
     }
 

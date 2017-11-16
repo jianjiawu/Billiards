@@ -63,7 +63,7 @@ public class UIManager : MonoBehaviour {
             _obj.transform.position = Vector3.zero;
             _obj.transform.rotation = Quaternion.identity;
             _obj.transform.localScale = Vector3.one;
-            rel = _obj.AddComponent<T>();
+            rel = _obj.GetComponent<T>();
         }
         else
         {
