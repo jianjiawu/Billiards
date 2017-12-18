@@ -21,7 +21,9 @@ public class BaseActor : MonoBehaviour {
         UIManager uim = UIM.AddComponent<UIManager>();
         uim.UI<UIHand>();
         UISlight uis = uim.UI<UISlight>();
+        uis.transform.localPosition = new Vector3(0, 0, 0);
         UIPower uip = uim.UI<UIPower>();
+        UIScore uisc = uim.UI<UIScore>();
         //碰撞器
         GameObject SpCol;
         SpCol = Instantiate(Resources.Load("Prefabs/SpCol")) as GameObject;
